@@ -20,14 +20,10 @@ jobs:
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          
+          rm -rf ~/company
+          git clone https://github.com/DevDevProject/company-service.git ~/company
           cd ~/company
-
-          # If first deploy, pull repo
-          if [ ! -d .git ]; then
-            git clone https://github.com/DevDevProject/company-service.git .
-          else
-            git pull origin main
-          fi
 
           echo "${{ secrets.DOTENV_FILE }}" > .env
 
