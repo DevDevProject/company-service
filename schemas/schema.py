@@ -11,6 +11,8 @@ class CreateCompany(BaseModel):
 class UpdateCompany(BaseModel):
     logo_url: str
     homepage_url: str
+    industry: str
+    size: str
     address: str
     revenue: str
     description: str
