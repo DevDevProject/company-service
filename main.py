@@ -9,24 +9,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dotenv import load_dotenv
 import os
-# A DB 연결
-# engine_a = create_engine("mysql+pymysql://root:123456@localhost:3306/company")
-# SessionA = sessionmaker(bind=engine_a)
-
-# # B DB 연결
-# engine_b = create_engine("mysql+pymysql://root:123456@localhost:3306/blog")
-# SessionB = sessionmaker(bind=engine_b)
-
-# A to B
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 SQLALCHEMY_DATABASE_URL = os.environ["DB_URL"]
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, echo=True
-)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 app = FastAPI()

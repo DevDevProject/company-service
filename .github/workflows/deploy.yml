@@ -1,0 +1,37 @@
+name: Deploy Company Service With Docker
+
+on:
+  push:
+    branches: main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd ~/fastapi-docker-app
+
+          # If first deploy, pull repo
+          if [ ! -d .git ]; then
+            git clone https://github.com/DevDevProject/company-service.git .
+          else
+            git pull origin main
+          fi
+
+          echo "${{ secrets.DOTENV_FILE }}" > .env
+
+          docker-compose down
+          docker-compose build
+          docker-compose up -d
+        EOF
