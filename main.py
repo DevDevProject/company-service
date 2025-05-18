@@ -45,7 +45,7 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/api/companies")
+@app.post("/api/company/companies")
 def create_companies(
     companies: List[CreateCompany],
     db: Session = Depends(get_db)
@@ -74,7 +74,7 @@ def create_companies(
     db.commit()
     return {"status": "ok", "processed": len(companies)}
 
-@app.get("/api/companies")
+@app.get("/api/company/companies")
 def get_company_names(
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=2000),
@@ -132,7 +132,7 @@ def get_company_names(
         "companies": result
     }
     
-@app.post("/api/update/companies")
+@app.post("/api/company/update/companies")
 def update_company_info(
     data: List[dict],
     db: Session = Depends(get_db)
