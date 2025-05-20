@@ -22,20 +22,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # 또는 ["*"] 개발 중일 때
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # ["GET", "POST", "OPTIONS", "PUT", "DELETE"] 등
+    allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# with SessionA() as session_a, SessionB() as session_b:
-#     companies = session_a.query(Company).all()
-#     for c in companies:
-#         session_b.add(TempCompany(
-#                 id=c.id, 
-#                 name=c.name,
-#             ))
-#     session_b.commit()
 
 
 def get_db():
