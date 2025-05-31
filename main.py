@@ -177,3 +177,43 @@ def update_company_info(
         "message": f"{success_count}개 성공, {len(fail_list)}개 실패",
         "failures": fail_list
     }
+    
+@app.get("/api/company/companies/single")
+def get_single_company(
+    name: str = Query(..., description="정확한 회사 이름"),
+    fields: Optional[str] = Query(None, description="예: name,logo_url"),
+    db: Session = Depends(get_db)
+):
+    company = db.query(Company).options(
+        joinedload(Company.detail),
+        joinedload(Company.stat)
+    ).filter(Company.name == name).first()
+
+    # if not company:
+    #     raise HTTPException(status_code=404, detail="Company not found")
+
+    field_list = fields.split(",") if fields else None
+
+    field_map = {
+        "id": lambda c: c.id,
+        "name": lambda c: c.name,
+        "homepage_url": lambda c: c.homepage_url,
+        "industry": lambda c: c.industry,
+        "region": lambda c: c.region,
+        "size": lambda c: c.size,
+        "description": lambda c: c.detail.description if c.detail else None,
+        "logo_url": lambda c: c.detail.logo_url if c.detail else None,
+        "address": lambda c: c.detail.address if c.detail else None,
+        "representation": lambda c: c.detail.representation if c.detail else None,
+        "employee_count": lambda c: c.stat.employee_count if c.stat else None,
+        "revenue": lambda c: c.stat.revenue if c.stat else None,
+        "establishment": lambda c: c.stat.establishment.strftime("%Y-%m-%d") if c.stat and c.stat.establishment else None
+    }
+
+    if field_list:
+        return {
+            field: field_map[field](company)
+            for field in field_list if field in field_map
+        }
+    else:
+        return {k: f(company) for k, f in field_map.items()}
