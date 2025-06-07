@@ -13,6 +13,8 @@ class Company(Base):
     industry = Column(String(100))
     region = Column(String(100))
     size = Column(String(50))
+    blog_count = Column(Integer)
+    recruit_count = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -46,6 +48,14 @@ class CompanyStat(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     company = relationship("Company", back_populates="stat")
+
+class BlogUpdateFailLog(Base):
+    __tablename__ = "blog_update_fail_log"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    company_id = Column(Integer)
+    error = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 BaseB = declarative_base()

@@ -69,6 +69,8 @@ def get_company_names(
         "address": lambda c: c.detail.address if c.detail else None,
         "representation": lambda c: c.detail.representation if c.detail else None,
         "employee_count": lambda c: c.stat.employee_count if c.stat else None,
+        "blog_count": lambda c: c.blog_count if c else None,
+        "recruit_count": lambda c: c.recruit_count if c else None,
         "revenue": lambda c: c.stat.revenue if c.stat else None,
         "establishment": lambda c: c.stat.establishment.strftime("%Y-%m-%d") if c.stat and c.stat.establishment else None
     }
@@ -177,6 +179,8 @@ def get_single_company(
         "address": lambda c: c.detail.address if c.detail else None,
         "representation": lambda c: c.detail.representation if c.detail else None,
         "employee_count": lambda c: c.stat.employee_count if c.stat else None,
+        "blog_count": lambda c: c.blog_count if c else None,
+        "recruit_count": lambda c: c.recruit_count if c else None,
         "revenue": lambda c: c.stat.revenue if c.stat else None,
         "establishment": lambda c: c.stat.establishment.strftime("%Y-%m-%d") if c.stat and c.stat.establishment else None
     }

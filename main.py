@@ -7,7 +7,7 @@ from typing import List, Optional
 from schemas.schema import CreateCompany
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
-from kafka.consumer import consume_blog_created_event
+from kafka.consumer import consume_blog_count
 from api.company import router as company_router
 
 from dotenv import load_dotenv
@@ -30,5 +30,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def start_kafka_consumer():
+    asyncio.create_task(consume_blog_count())
 
 app.include_router(company_router, prefix="/api/company")
