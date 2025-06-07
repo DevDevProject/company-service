@@ -21,13 +21,15 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           
-          rm -rf ~/company
+          rm -rf ~/company || true
           git clone https://github.com/DevDevProject/company-service.git ~/company
           cd ~/company
 
-          echo "${{ secrets.DOTENV_FILE }}" > .env
+          cat <<EOT > .env
+${{ secrets.DOTENV_FILE }}
+EOT
 
-          docker-compose down
+          docker-compose down || true
           docker-compose build
           docker-compose up -d
         EOF
