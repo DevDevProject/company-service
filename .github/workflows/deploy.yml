@@ -25,9 +25,9 @@ jobs:
           git clone https://github.com/DevDevProject/company-service.git ~/company
           cd ~/company
 
-          cat <<EOT > .env
-${{ secrets.DOTENV_FILE }}
-EOT
+          cat > .env << 'EOT' 
+          ${{ secrets.DOTENV_FILE }} 
+          EOT
 
           docker-compose down || true
           docker-compose build
