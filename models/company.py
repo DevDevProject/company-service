@@ -56,6 +56,14 @@ class BlogUpdateFailLog(Base):
     company_id = Column(Integer)
     error = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+class RecruitUpdateFailLog(Base):
+    __tablename__ = "recruit_update_fail_log"
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    company_id = Column(Integer)
+    error = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 BaseB = declarative_base()
