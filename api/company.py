@@ -192,3 +192,51 @@ def get_single_company(
         }
     else:
         return {k: f(company) for k, f in field_map.items()}
+    
+@router.get("/{id}/relations")
+def get_related_companies(
+    id: int,
+    limit: int = 4,
+    db: Session = Depends(get_db)
+):
+    current_company = db.query(Company).filter(Company.id == id).first()
+    
+    current_region = current_company.region
+    current_industry = current_company.industry
+    
+    related_companies = []
+    
+    duplicated_company_ids = {current_company.id}
+    
+    if current_region and current_industry:
+        matched_companies = db.query(Company)\
+            .filter(Company.id != current_company.id)\
+            .filter(Company.region == current_region)\
+            .filter(Company.industry == current_industry)\
+            .limit(limit)
+
+        first_matches = matched_companies.all()
+        
+        for comp in first_matches:
+            if comp.id not in duplicated_company_ids:
+                related_companies.append(comp)
+                duplicated_company_ids.add(comp.id)
+                
+        if limit <= len(related_companies):
+            return related_companies
+        
+    if current_industry and len(related_companies) < limit:
+        remaining_limit = limit - len(related_companies)
+        query_industry_only = db.query(Company)\
+            .filter(Company.id != current_company.id)\
+            .filter(Company.industry == current_industry)\
+            .filter(Company.id.notin_(list(duplicated_company_ids)))\
+            .limit(remaining_limit)
+        
+        industry_only_matches = query_industry_only.all()
+        for comp in industry_only_matches:
+            if comp.id not in duplicated_company_ids:
+                related_companies.append(comp)
+                duplicated_company_ids.add(comp.id)
+                
+    return related_companies

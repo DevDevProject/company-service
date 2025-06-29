@@ -45,7 +45,14 @@ def update_company_recruit_count(company_name: str, retry: int = 3):
             db.commit()
             print(f"성공 {company_name} 채용 공고 수 증가 → 현재 수: {company.recruit_count}")
         else:
-            print(f"실패 {company_name} 회사 없음")
+            company = Company(
+                name = company_name,
+                recruit_count = 1
+            )
+            db.add(company)
+            db.commit()
+            
+            print(f"{company_name} 존재하지 않음. 새로 생성")
     except Exception as e:
         print(f"🔥 {company_name} DB 업데이트 실패 (남은 재시도 {retry - 1}회): {e}")
         save_recruit_fail_log(company_name, str(e))
