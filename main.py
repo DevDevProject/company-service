@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, Query
 from sqlalchemy.orm import Session, joinedload
+from api import s3
 from models.company import Base, Company, BaseB, TempCompany, CompanyDetail, CompanyStat
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from kafka.consumer import consume_blog_recruit_topics
 from api.company import router as company_router
+from api.popular_company import router as popular_router
 
 from dotenv import load_dotenv
 import os
@@ -36,3 +38,5 @@ async def start_kafka_consumer():
     asyncio.create_task(consume_blog_recruit_topics())
 
 app.include_router(company_router, prefix="/api/company")
+app.include_router(popular_router, prefix="/api/company")
+app.include_router(s3.router, prefix="/s3/company")

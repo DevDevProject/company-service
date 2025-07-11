@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session, joinedload
+from api.popular_company import increase_company_score
 from db.session import get_db
 from models.company import Company, CompanyDetail, CompanyStat
 from schemas.schema import CreateCompany
@@ -162,8 +163,7 @@ def get_single_company(
         joinedload(Company.stat)
     ).filter(Company.name == name).first()
 
-    # if not company:
-    #     raise HTTPException(status_code=404, detail="Company not found")
+    increase_company_score(company.id)
 
     field_list = fields.split(",") if fields else None
 
