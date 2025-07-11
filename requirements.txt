@@ -7,3 +7,4 @@ python-dotenv
 aiokafka
 redis
 boto3
+mysqlx
