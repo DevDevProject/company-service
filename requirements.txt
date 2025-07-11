@@ -6,3 +6,4 @@ pymysql
 python-dotenv
 aiokafka
 redis
+boto3
