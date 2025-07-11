@@ -84,7 +84,6 @@ def get_company_names(
                 for field in field_list if field in field_map
             })
         else:
-            # 필드 미지정 시 기본 전체 반환
             result.append({
                 k: f(company) for k, f in field_map.items()
             })
@@ -112,14 +111,12 @@ def update_company_info(
                 fail_list.append({"name": item.get("name"), "error": "회사 없음"})
                 continue
             
-            # 기존 company 정보 업데이트
             company.homepage_url = item.get("homepage_url")
             company.industry = item.get("industry")
             company.region = item.get("region")
             company.size = item.get("size")
             db.commit()
 
-            # 연관된 CompanyStat 추가
             stat = CompanyStat(
                 revenue=item.get("revenue"),
                 employee_count=item.get("employee_count"),
@@ -128,7 +125,6 @@ def update_company_info(
             )
             db.add(stat)
 
-            # 연관된 CompanyDetail 추가
             detail = CompanyDetail(
                 description=item.get("description"),
                 logo_url=item.get("logo_url"),
@@ -142,10 +138,10 @@ def update_company_info(
             success_count += 1
 
         except Exception as e:
-            db.rollback()  # 실패 시 롤백
+            db.rollback()
             fail_list.append({"name": item.get("name"), "error": str(e)})
 
-    db.commit()  # 전체 처리 후 한 번에 커밋
+    db.commit()
 
     return {
         "message": f"{success_count}개 성공, {len(fail_list)}개 실패",

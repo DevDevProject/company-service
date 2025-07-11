@@ -1,14 +1,8 @@
-
-
-from typing import List
 import uuid
 import boto3
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from mysqlx import Session
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from config.config import AWS_S3_BUCKET
-from db.session import get_db
-from schemas.schema import CreateCompany
 from config.config import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
 
 
@@ -27,10 +21,8 @@ async def upload_logo(
     file: UploadFile = File(...)
 ):
     try:
-        # 유니크한 파일 이름 만들기
         file_key = f"uploads/{uuid.uuid4().hex}_{file.filename}"
         
-        # S3에 업로드
         s3.upload_fileobj(
             file.file,
             AWS_S3_BUCKET,
