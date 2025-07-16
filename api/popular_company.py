@@ -11,14 +11,21 @@ load_dotenv()
 
 REDIS_URL = os.getenv("REDIS_SERVER")
 REDIS_PORT = os.getenv("REDIS_PORT")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
-redis_client = redis.Redis(host=REDIS_URL, port=REDIS_PORT, decode_responses=True)
+redis_client = redis.Redis(
+    host=REDIS_URL,
+    port=REDIS_PORT,
+    password=REDIS_PASSWORD,
+    decode_responses=True
+)
 
 def increase_company_score(company_id: int):
     redis_client.zincrby("popular:company", 1, str(company_id))
     
 def get_popular_company_ids(limit: int = 10) -> List[int]:
     ids = redis_client.zrevrange("popular:company", 0, limit - 1)
+    print(f"Raw IDs: {ids}")
     return [int(i) for i in ids]
 
 def get_popular_companies(db: Session, ids: List[int]) -> List[Company]:
@@ -27,10 +34,12 @@ def get_popular_companies(db: Session, ids: List[int]) -> List[Company]:
 
     companies = (
         db.query(Company)
-        .join(Company.detail)
         .filter(Company.id.in_(ids))
         .all()
     )
+    
+    print(f"Requested IDs: {ids}")
+    print(f"Returned IDs from DB: {[c.id for c in companies]}")
 
     id_to_company = {c.id: c for c in companies}
     return [id_to_company[i] for i in ids if i in id_to_company]
